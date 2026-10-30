@@ -1,0 +1,31 @@
+# Snowflake CI/CD Framework
+# Bitbucket Pipelines configuration
+
+image: python:3.12
+
+options:
+  max-time: 20
+
+pipelines:
+
+  default:
+    - step:
+        name: CI - Validate Python Project
+        caches:
+          - pip
+        script:
+          - python --version
+          - pip install --upgrade pip
+          - pip install pytest
+          
+          # Provide non-sensitive CI values for configuration validation
+          - export SNOWFLAKE_ACCOUNT="ci-placeholder"
+          - export SNOWFLAKE_USER="ci-placeholder"
+          - export SNOWFLAKE_ROLE="ci-placeholder"
+          - export SNOWFLAKE_WAREHOUSE="ci-placeholder"
+
+          # Run CI smoke test
+          - python scripts/ci_smoke_test.py
+
+          # Run automated tests
+          - pytest -v
